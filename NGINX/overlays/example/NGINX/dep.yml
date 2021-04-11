@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      initContainers:
+        - name: certbot
+          image: certbot/cerbot
+          command: ["sh", "-c", "/retrieve_certificate.sh" ]
+          volumeMounts:
+            - name: nginx-data
+              mountPath: /var/www/files/
+            - name: nginx-certs
+              mountPath: /var/www/certs/
+            - name: nginx-retrieve-certificate-sh
+              mountPath: /retrieve-certificate.sh
+              subPath: retrieve-certificate.sh
+      containers:
+        - name: nginx
+          image: nginx
+          envFrom:
+            - configMapRef:
+                name: nginx-env-vars
+          ports:
+            - name: "nginx-http"
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: nginx-data
+              mountPath: /var/www/files/
+            - name: nginx-certs
+              mountPath: /var/www/certs/
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-data
+          persistentVolumeClaim:
+            claimName: nginx-data
+        - name: nginx-certs
+          persistentVolumeClaim:
+            claimName: nginx-certs
+        - name: nginx-config
+          persistentVolumeClaim:
+          configMap:
+            name: nginx.conf
+        - name: nginx-retrieve-certificate-sh
+          persistentVolumeClaim:
+          configMap:
+            name: retrieve-certificate.sh

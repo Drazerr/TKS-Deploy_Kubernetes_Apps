@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: nginx-data
+spec:
+    capacity:
+        storage: 1Gi
+    accessModes:
+        - ReadWriteMany
+    nfs:
+        path: /mnt/DataPool/Kubernetes/NGINX/data/
+        server: earth.sol.milkyway
+    storageClassName: nfs
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: nginx-certs
+spec:
+    capacity:
+        storage: 1Gi
+    accessModes:
+        - ReadWriteMany
+    nfs:
+        path: /mnt/DataPool/Kubernetes/NGINX/certs/
+        server: earth.sol.milkyway
+    storageClassName: nfs
