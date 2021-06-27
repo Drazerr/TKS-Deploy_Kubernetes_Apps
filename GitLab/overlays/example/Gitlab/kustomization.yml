@@ -21,7 +21,7 @@ secretGenerator:
       - gitlab_omnibus_config
 
 configMapGenerator:
-  - name: gitlab-env-vaars
+  - name: gitlab-env-vars
     literals:
       # - ENABLE_BOOTSNAP=1
       # - GITLAB_CDN_HOST='gitlab.tjzimmerman.com'
